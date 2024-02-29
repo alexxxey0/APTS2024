@@ -27,11 +27,13 @@ public:
     int id;
     int time;
     int checking_guard;
+    char type;
 
-    Person_out(int id, int time, int checking_guard) {
+    Person_out(int id, int time, int checking_guard, char type) {
         this->id = id;
         this->time = time;
         this->checking_guard = checking_guard;
+        this->type = type;
     }
 
     Person_out () {};
@@ -115,7 +117,15 @@ vector<Person_out> sorted_output(vector<Person_out> output) {
 
             for (int g: guard_nums) {
                 for (Person_out p: output) {
-                    if (p.time == n && p.checking_guard == g) {
+                    if (p.time == n && p.checking_guard == g && p.type == 'P') {
+                        result.push_back(p);
+                        continue;
+                    }
+                }
+            }
+            for (int g: guard_nums) {
+                for (Person_out p: output) {
+                    if (p.time == n && p.checking_guard == g && p.type == 'N') {
                         result.push_back(p);
                         continue;
                     }
@@ -179,12 +189,12 @@ int main() {
             if (available_guard != 0) {
                 p_guards[available_guard - 1].busy = true;
                 p_guards[available_guard - 1].available_at = id + p_guards[available_guard - 1].time;
-                Person_out person_out(id, id + p_guards[available_guard - 1].time, available_guard);
+                Person_out person_out(id, id + p_guards[available_guard - 1].time, available_guard, 'P');
                 output_p.push_back(person_out);
             } else {
                 soonest_guard = get_soonest_guard(p_guards, p_guards_count);
                 p_guards[soonest_guard - 1].available_at = p_guards[soonest_guard - 1].available_at + p_guards[soonest_guard - 1].time;
-                Person_out person_out(id, get_guard_available_at(p_guards, p_guards_count, soonest_guard), soonest_guard);
+                Person_out person_out(id, get_guard_available_at(p_guards, p_guards_count, soonest_guard), soonest_guard, 'P');
                 output_p.push_back(person_out);
             }
 
@@ -196,38 +206,41 @@ int main() {
             if (available_guard != 0) {
                 n_guards[available_guard - 1].busy = true;
                 n_guards[available_guard - 1].available_at = id + n_guards[available_guard - 1].time;
-                Person_out person_out(id, id + n_guards[available_guard - 1].time, available_guard);
+                Person_out person_out(id, id + n_guards[available_guard - 1].time, available_guard, 'N');
                 output_n.push_back(person_out);
             } else {
                 soonest_guard = get_soonest_guard(n_guards, n_guards_count);
                 n_guards[soonest_guard - 1].available_at = n_guards[soonest_guard - 1].available_at + n_guards[soonest_guard - 1].time;
-                Person_out person_out(id, get_guard_available_at(n_guards, n_guards_count, soonest_guard), soonest_guard);
+                Person_out person_out(id, get_guard_available_at(n_guards, n_guards_count, soonest_guard), soonest_guard, 'N');
                 output_n.push_back(person_out);
             }
         }
         cin >> letter1;
     }
 
-    output_p.insert(output_p.end(), output_n.begin(), output_n.end());
+    if (output_p.size() == 0 && output_n.size() == 0) cout << "nothing";
+    else {
+        output_p.insert(output_p.end(), output_n.begin(), output_n.end());
 
 
-    vector<Person_out> result;
-    //for (Person_out p: output_p) cout << p.id << " ";
+        vector<Person_out> result;
+        //for (Person_out p: output_p) cout << p.id << " ";
 
-    result = sorted_output(output_p);
+        result = sorted_output(output_p);
 
-    vector<Person_out> unique_result;
-    vector<int> unique_nums;
+        vector<Person_out> unique_result;
+        vector<int> unique_nums;
 
-    for (Person_out p: result) {
-        if (find(unique_nums.begin(), unique_nums.end(), p.id) == unique_nums.end()) {
-            unique_nums.push_back(p.id);
-            unique_result.push_back(p);
+        for (Person_out p: result) {
+            if (find(unique_nums.begin(), unique_nums.end(), p.id) == unique_nums.end()) {
+                unique_nums.push_back(p.id);
+                unique_result.push_back(p);
+            }
         }
-    }
 
-    for (Person_out p: unique_result) {
-        cout << p.id << " " << p.time << endl;
+        for (Person_out p: unique_result) {
+            cout << p.id << " " << p.time << endl;
+        }
     }
 
 }

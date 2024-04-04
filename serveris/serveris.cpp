@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
@@ -19,10 +18,6 @@ public:
         this->furthest_computer = 0;
     }
 };
-
-vector<int> get_adjacent_computers (vector<Computer> computers, int num) {
-    return computers[num-1].adjacent_computers;
-}
 
 
 int main() {
@@ -66,7 +61,7 @@ int main() {
         vector<int> adjacent_nodes;
         visited_nodes.push_back(c.num);
 
-        adjacent_nodes = get_adjacent_computers(computers, c.num);
+        adjacent_nodes = computers[c.num - 1].adjacent_computers;
         for (int n: adjacent_nodes) {
             if (find(visited_nodes.begin(), visited_nodes.end(), n) == visited_nodes.end()) {
                 current_level_nodes.push_back(n);
@@ -76,18 +71,19 @@ int main() {
         levels[current_level] = current_level_nodes;
 
         while (visited_nodes.size() < computers.size()) {
+            vector<int> current_level_nodes;
             for (int n: levels[current_level]) {
-                adjacent_nodes = get_adjacent_computers(computers, n);
+                adjacent_nodes = computers[n-1].adjacent_computers;
 
-                for (int n: adjacent_nodes) {
-                    if (find(visited_nodes.begin(), visited_nodes.end(), n) == visited_nodes.end()) {
-                        current_level_nodes.push_back(n);
-                        visited_nodes.push_back(n);
+                for (int m: adjacent_nodes) {
+                    if (find(visited_nodes.begin(), visited_nodes.end(), m) == visited_nodes.end()) {
+                        current_level_nodes.push_back(m);
+                        visited_nodes.push_back(m);
                     }
                 }
             }
-            levels[current_level + 1] = current_level_nodes;
             current_level++;
+            levels[current_level] = current_level_nodes;
 
         }
         c.furthest_computer = current_level;

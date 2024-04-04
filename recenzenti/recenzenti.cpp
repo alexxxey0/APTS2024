@@ -39,8 +39,8 @@ bool nickname_belongs(vector<Person> &persons, int nickname, string name) {
 }
 
 int main() {
-    ifstream cin("reviewers.in");
-    ofstream cout("reviewers.out");
+    ifstream cin("mycase2.txt");
+    ofstream cout("mycase2_out.txt");
 
     string command, name;
     int nickname_count, nickname;
